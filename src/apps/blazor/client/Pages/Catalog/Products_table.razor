@@ -1,0 +1,95 @@
+﻿@page "/products2"
+@using Mapster
+@inject IApiClient _client
+
+<MudTable T="ProductResponse" ServerData="LoadDataAsync" Dense="true" Hover="true" Bordered="true" Striped="true">
+    <HeaderContent>
+        <MudTh>ID</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Description</MudTh>
+    </HeaderContent>
+    <RowTemplate Context="item">
+        <MudTd>@item.Id</MudTd>
+        <MudTd>@item.Name</MudTd>
+        <MudTd>@item.Description</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private List<BrandResponse> _brands = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBrandsAsync();
+    }
+
+    private async Task<TableData<ProductResponse>> LoadDataAsync(TableState state, CancellationToken cancellationToken)
+    {
+  
+            // Ensure valid numeric values to avoid conversion errors
+
+            var productFilter = new SearchProductsCommand
+                {
+                    PageNumber = state.Page + 1, // MudTable starts index from 0
+                    PageSize = state.PageSize,
+                    MinimumRate = Convert.ToDouble(SearchMinimumRate),
+                    MaximumRate = Convert.ToDouble(SearchMaximumRate),
+                    BrandId = SearchBrandId
+                };
+
+            var result = await _client.SearchProductsEndpointAsync("1", productFilter);
+
+        return result.Adapt<TableData<ProductResponse>>();
+  
+    }
+
+    private async Task LoadBrandsAsync()
+    {
+        if (_brands.Count == 0)
+        {
+            var response = await _client.SearchBrandsEndpointAsync("1", new SearchBrandsCommand());
+            if (response?.Items != null)
+            {
+                _brands = response.Items.ToList();
+            }
+        }
+    }
+
+    // Advanced Search
+
+    private Guid? _searchBrandId;
+    private Guid? SearchBrandId
+    {
+        get => _searchBrandId;
+        set
+        {
+            _searchBrandId = value;
+            // _ = _table.ReloadDataAsync();
+        }
+    }
+
+    private decimal _searchMinimumRate;
+    private decimal SearchMinimumRate
+    {
+        get => _searchMinimumRate;
+        set
+        {
+            _searchMinimumRate = value;
+            // _ = _table.ReloadDataAsync();
+        }
+    }
+
+    private decimal _searchMaximumRate = 9999;
+    private decimal SearchMaximumRate
+    {
+        get => _searchMaximumRate;
+        set
+        {
+            _searchMaximumRate = value;
+            // _ = _table.ReloadDataAsync();
+        }
+    }
+}
