@@ -1,0 +1,45 @@
+﻿@inject IApiClient _client
+
+<EditForm Model="@createProduct" OnValidSubmit="OnValidSubmit">
+    <MudDialog>
+        <DialogContent>
+            <DataAnnotationsValidator />
+            <MudGrid>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="createProduct.Name" Label="Name" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="createProduct.Description" Label="Description" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="createProduct.Price" Label="Price" />
+                </MudItem>            
+            </MudGrid>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+    private CreateProductCommand createProduct = new CreateProductCommand();
+
+private async Task OnValidSubmit()
+{
+    var result = await _client.CreateProductEndpointAsync("1", createProduct);
+    if (result is not null)
+    {
+        MudDialog.Close();
+    }
+}
+
+private void Cancel()
+{
+    MudDialog.Cancel();
+}
+}

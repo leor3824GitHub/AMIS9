@@ -2,48 +2,82 @@
 @using Mapster
 @inject IApiClient _client
 
-<MudTable T="ProductResponse" ServerData="LoadDataAsync" Dense="true" Hover="true" Bordered="true" Striped="true">
-    <HeaderContent>
-        <MudTh>ID</MudTh>
-        <MudTh>Name</MudTh>
-        <MudTh>Description</MudTh>
-    </HeaderContent>
-    <RowTemplate Context="item">
-        <MudTd>@item.Id</MudTd>
-        <MudTd>@item.Name</MudTd>
-        <MudTd>@item.Description</MudTd>
-    </RowTemplate>
+<MudDataGrid @ref="_table" T="ProductResponse" ServerData="ServerReload"
+Loading="@_loading">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Product List</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+        AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Id" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Price" />
+    </Columns>
     <PagerContent>
-        <MudTablePager />
+        <MudDataGridPager/>
     </PagerContent>
-</MudTable>
+</MudDataGrid>
 
 @code {
     private List<BrandResponse> _brands = new();
+    private MudDataGrid<ProductResponse> _table = default!;
+
+    private string searchString = "";
+    private bool _loading;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadBrandsAsync();
     }
 
-    private async Task<TableData<ProductResponse>> LoadDataAsync(TableState state, CancellationToken cancellationToken)
+    private async Task<GridData<ProductResponse>> ServerReload(GridState<ProductResponse> state)
     {
-  
-            // Ensure valid numeric values to avoid conversion errors
-
+        try
+        {
+            _loading = true;
             var productFilter = new SearchProductsCommand
                 {
-                    PageNumber = state.Page + 1, // MudTable starts index from 0
                     PageSize = state.PageSize,
-                    MinimumRate = Convert.ToDouble(SearchMinimumRate),
-                    MaximumRate = Convert.ToDouble(SearchMaximumRate),
-                    BrandId = SearchBrandId
+                    PageNumber = state.Page + 1,
+                    AdvancedSearch = new()
+                    {
+                        Fields = new[] { "name" },
+                        Keyword = searchString
+                    }
                 };
-
+            productFilter.MinimumRate = Convert.ToDouble(SearchMinimumRate);
+            productFilter.MaximumRate = Convert.ToDouble(SearchMaximumRate);
+            productFilter.BrandId = SearchBrandId;
             var result = await _client.SearchProductsEndpointAsync("1", productFilter);
 
-        return result.Adapt<TableData<ProductResponse>>();
-  
+            return new GridData<ProductResponse>
+                {
+                    Items = result.Items ?? new List<ProductResponse>(),
+                    TotalItems = result.TotalCount
+                };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return new GridData<ProductResponse>
+                {
+                    Items = new List<ProductResponse>(),
+                    TotalItems = 0
+                };
+        }
+        finally
+        {
+            _loading = false;
+        }
+        
+    }
+    
+    private Task OnSearch(string text)
+    {
+        searchString = text;
+        return _table.ReloadServerData();
     }
 
     private async Task LoadBrandsAsync()
@@ -67,7 +101,7 @@
         set
         {
             _searchBrandId = value;
-            // _ = _table.ReloadDataAsync();
+            _ = _table.ReloadServerData();
         }
     }
 
@@ -78,7 +112,7 @@
         set
         {
             _searchMinimumRate = value;
-            // _ = _table.ReloadDataAsync();
+            _ = _table.ReloadServerData();
         }
     }
 
@@ -89,7 +123,7 @@
         set
         {
             _searchMaximumRate = value;
-            // _ = _table.ReloadDataAsync();
+            _ = _table.ReloadServerData();
         }
     }
 }
