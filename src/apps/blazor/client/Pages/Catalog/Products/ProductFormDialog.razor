@@ -1,0 +1,16 @@
+﻿<h3>Component</h3>
+<MudDialog>
+    <DialogContent>
+        <DataAnnotationsValidator />
+        <MudForm @ref="_form" Model="@Model" >
+            <MudTextField @bind-Value="Model.Name" Label="Name" />
+            <MudTextField @bind-Value="Model.Description" Label="Description" />
+            <MudTextField @bind-Value="Model.Price" Label="Price" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
