@@ -9,13 +9,13 @@ public partial class ProductFormDialog
 {
     [CascadingParameter] 
     private MudDialogInstance MudDialog { get; set; } = default!;
-    //[Parameter]
-    //[EditorRequired]
-    //public TRequest Model { get; set; } = default!;
-    public CreateProductCommand Model { get; set; } = new();
+    [Parameter]
+
+    public UpdateProductCommand Model { get; set; } = default!;
     [Inject]
     private IApiClient productclient { get; set; } = default!;
     [Parameter] public Action? Refresh { get; set; }
+    [Parameter] public bool? IsCreate { get; set; }
 
     private MudForm? _form;
     private bool _saving;
@@ -28,15 +28,31 @@ public partial class ProductFormDialog
     {
         //if (_form == null) return;
         //if (!await _form.Validate()) return;
-        
+
         //_saving = true;
-        var response = await productclient.CreateProductEndpointAsync("1", Model);
-        //_saving = false;
-        if (response != null)
+
+        if (IsCreate == true)
         {
-            MudDialog.Close(DialogResult.Ok(true));
-            Refresh?.Invoke();
+            var m = Model.Adapt<CreateProductCommand>();
+            var response = await productclient.CreateProductEndpointAsync("1", m);
+            if (response != null)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                Refresh?.Invoke();
+            }
         }
+        else
+        {
+            var response = await productclient.UpdateProductEndpointAsync("1",Model.Id, Model);
+            if (response != null)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                Refresh?.Invoke();
+            }
+        }
+        
+        //_saving = false;
+       
     }
     private void Cancel()
     {

@@ -1,6 +1,7 @@
 using FSH.Starter.Blazor.Infrastructure.Api;
 using FSH.Starter.Blazor.Infrastructure.Auth;
 using FSH.Starter.Shared.Authorization;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -18,7 +19,7 @@ public partial class Products_table
     private IAuthorizationService AuthService { get; set; } = default!;
     [Inject]
     protected IApiClient productclient { get; set; } = default!;
-
+    private ProductResponse _currentDto = new();
     private string searchString = "";
     private bool _loading;
 
@@ -80,15 +81,15 @@ public partial class Products_table
         }
 
     }
-    private async Task ShowEditFormDialog(string title)
+    private async Task ShowEditFormDialog(string title, UpdateProductCommand command, bool IsCreate)
     {
-        //var parameters = new DialogParameters<ProductFormDialog>
-        //{
-        //    { x => x.Refresh, () => _table.ReloadServerData() },
-        //    { x => x.Model, command }
-        //};
+        var parameters = new DialogParameters
+        {
+            { nameof(ProductFormDialog.Model), command },
+            { nameof(ProductFormDialog.IsCreate), IsCreate }
+        };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
-        var dialog = await DialogService.ShowAsync<ProductFormDialog>(title, options);
+        var dialog = await DialogService.ShowAsync<ProductFormDialog>(title,parameters ,options);
         var state = await dialog.Result;
 
         if (!state.Canceled)
@@ -100,11 +101,36 @@ public partial class Products_table
 
     private async Task OnCreate()
     {
-        //var command = new UpdateProductCommand();
+        var model = new UpdateProductCommand();
 
-        await ShowEditFormDialog("CreateAnItem");
+        await ShowEditFormDialog("CreateAnItem", model, true);
     }
-
+    private async Task OnClone()
+    {
+    //    var copy = _selectedItems.First();
+    //    var model = Mapper.Map<ProductResponse, CreateProductCommand>(copy, opts =>
+    //    {
+    //        opts.AfterMap((src, dest) =>
+    //        {
+    //            dest.Id = 0;
+    //        });
+    //    });
+    //    await ShowEditFormDialog("CreateAnItem", model);
+    }
+    private async Task OnEdit(ProductResponse dto)
+    {
+        var command = dto.Adapt<UpdateProductCommand>();
+        await ShowEditFormDialog("EditTheItem", command, false);
+    }
+    private async Task OnDelete(ProductResponse dto)
+    {
+        if (dto.Id.HasValue)
+        {
+            await productclient.DeleteProductEndpointAsync("1", dto.Id.Value);
+            await _table.ReloadServerData();
+            _selectedItems.Clear();
+        }
+    }
     private async Task OnRefresh()
     {
         await _table.ReloadServerData();

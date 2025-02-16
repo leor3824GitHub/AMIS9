@@ -2,8 +2,16 @@
 @using Mapster
 @using FSH.Starter.Shared.Authorization
 
-<MudDataGrid @ref="_table" T="ProductResponse" ServerData="ServerReload"
-Loading="@_loading">
+<MudDataGrid ServerData="ServerReload"
+             FixedHeader="true"
+             FixedFooter="true"
+             Virtualize="true"
+             MultiSelection="true"
+             @bind-SelectedItems="_selectedItems"
+             @bind-SelectedItem="_currentDto"
+             ColumnResizeMode="ResizeMode.Column"
+            Hover="true"
+            Loading="@_loading" @ref="_table">
     <ToolBarContent>
         <div class="d-flex align-start flex-grow-1">
             <MudText Typo="Typo.h6">Product List</MudText>
@@ -30,14 +38,14 @@ Loading="@_loading">
                                 New
                             </MudButton>
 
-@*                             <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary"
                                        StartIcon="@Icons.Material.Filled.ContentCopy"
                                        Size="Size.Small"
                                        Disabled="@(_selectedItems.Count != 1)"
                                        OnClick="OnClone"
                                        IconColor="Color.Surface">
-                                @ConstantString.Clone
-                            </MudButton> *@
+                                Clone
+                            </MudButton>
                         }
 @*                         @if (_canDelete)
                         {
@@ -127,7 +135,20 @@ Loading="@_loading">
     <Columns>
         <PropertyColumn Property="x => x.Id" Title="Id" />
         <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Description" />
         <PropertyColumn Property="x => x.Price" />
+        <TemplateColumn CellStyle="width:60px" Title="Actions" Sortable="false">
+            <CellTemplate>
+                <MudMenu Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Size="Size.Small"
+                         Dense="true"
+                         IconColor="Color.Info" AnchorOrigin="Origin.CenterLeft">
+
+                    <MudMenuItem OnClick="@(() => OnEdit(context.Item))">Edit</MudMenuItem>
+
+                     <MudMenuItem OnClick="@(() => OnDelete(context.Item))">Delete</MudMenuItem>
+                </MudMenu>
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
     <PagerContent>
         <MudDataGridPager/>
