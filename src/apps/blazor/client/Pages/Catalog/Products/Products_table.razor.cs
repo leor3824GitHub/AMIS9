@@ -12,6 +12,7 @@ public partial class Products_table
     private List<BrandResponse> _brands = new();
     private MudDataGrid<ProductResponse> _table = default!;
     private HashSet<ProductResponse> _selectedItems = new();
+    [CascadingParameter]
     protected Task<AuthenticationState> AuthState { get; set; } = default!;
     [Inject]
     private IAuthorizationService AuthService { get; set; } = default!;
@@ -30,11 +31,11 @@ public partial class Products_table
     protected override async Task OnInitializedAsync()
     {
         var state = await AuthState;
-        _canSearch = await AuthService.HasPermissionAsync(state.User, FshActions.Update, FshResources.Users);
-        _canCreate = await AuthService.HasPermissionAsync(state.User, FshActions.Update, FshResources.Users);
-        _canUpdate = await AuthService.HasPermissionAsync(state.User, FshActions.Update, FshResources.Users);
-        _canDelete = await AuthService.HasPermissionAsync(state.User, FshActions.Update, FshResources.Users);
-        _canExport = await AuthService.HasPermissionAsync(state.User, FshActions.Update, FshResources.Users);
+        _canSearch = await AuthService.HasPermissionAsync(state.User, FshActions.Search, FshResources.Products);
+        _canCreate = await AuthService.HasPermissionAsync(state.User, FshActions.Create, FshResources.Products);
+        _canUpdate = await AuthService.HasPermissionAsync(state.User, FshActions.Update, FshResources.Products);
+        _canDelete = await AuthService.HasPermissionAsync(state.User, FshActions.Delete, FshResources.Products);
+        _canExport = await AuthService.HasPermissionAsync(state.User, FshActions.Export, FshResources.Products);
 
         await LoadBrandsAsync();
     }
@@ -79,15 +80,15 @@ public partial class Products_table
         }
 
     }
-    private async Task ShowEditFormDialog(string title, UpdateProductCommand command)
+    private async Task ShowEditFormDialog(string title)
     {
-        var parameters = new DialogParameters<ProductFormDialog>
-        {
-            { x => x.Refresh, () => _table.ReloadServerData() },
-            { x => x.Model, command }
-        };
+        //var parameters = new DialogParameters<ProductFormDialog>
+        //{
+        //    { x => x.Refresh, () => _table.ReloadServerData() },
+        //    { x => x.Model, command }
+        //};
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
-        var dialog = await DialogService.ShowAsync<ProductFormDialog>(title, parameters, options);
+        var dialog = await DialogService.ShowAsync<ProductFormDialog>(title, options);
         var state = await dialog.Result;
 
         if (!state.Canceled)
@@ -99,16 +100,13 @@ public partial class Products_table
 
     private async Task OnCreate()
     {
-        var command = new UpdateProductCommand();
+        //var command = new UpdateProductCommand();
 
-        await ShowEditFormDialog("CreateAnItem", command);
+        await ShowEditFormDialog("CreateAnItem");
     }
 
     private async Task OnRefresh()
     {
-        // ProductCacheKey.Refresh();
-        // _selectedItems = new HashSet<ProductDto>();
-        // Query.Keyword = string.Empty;
         await _table.ReloadServerData();
     }
 
