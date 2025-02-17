@@ -130,9 +130,9 @@ public partial class Products_table
         {
                  await productclient.DeleteProductEndpointAsync("1", dto.Id.Value);
 
-                Snackbar.Add("Item deleted", Severity.Success);
-                await _table.ReloadServerData();
-                _selectedItems.Clear();
+                Snackbar.Add(dto.Id.Value.ToString(), Severity.Success);
+                //await _table.ReloadServerData();
+                //_selectedItems.Clear();
         }
     }
     private async Task OnDeleteChecked()
