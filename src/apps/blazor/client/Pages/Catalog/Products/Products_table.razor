@@ -3,9 +3,6 @@
 @using FSH.Starter.Shared.Authorization
 
 <MudDataGrid ServerData="ServerReload"
-             FixedHeader="true"
-             FixedFooter="true"
-             Virtualize="true"
              MultiSelection="true"
              @bind-SelectedItems="_selectedItems"
              @bind-SelectedItem="_currentDto"
@@ -47,7 +44,7 @@
                                 Clone
                             </MudButton>
                         }
-@*                         @if (_canDelete)
+                        @if (_canDelete)
                         {
                             <MudButton Variant="Variant.Outlined" Color="Color.Error"
                                        StartIcon="@Icons.Material.Filled.Delete"
@@ -55,10 +52,10 @@
                                        Size="Size.Small"
                                        OnClick="OnDeleteChecked"
                                        IconColor="Color.Surface">
-                                @ConstantString.Delete
+                                Delete
                             </MudButton>
                         }
-                        @if (_canExport)
+                       @*  @if (_canExport)
                         {
                             <MudLoadingButton Loading="_exporting" Variant="Variant.Outlined" Color="Color.Primary"
                                               Disabled="@_loading"
@@ -74,8 +71,8 @@
                                               Size="Size.Small">
                                 @ConstantString.ExportPDF
                             </MudLoadingButton>
-                        }
-                        @if (_canImport)
+                        } *@
+                        @* @if (_canImport)
                         {
                             <MudFileUpload T="IBrowserFile" FilesChanged="OnImportData" Accept=".xlsx">
                                 <ActivatorContent>
@@ -96,9 +93,9 @@
                                     </MudButton>
                                 </ActivatorContent>
                             </MudFileUpload>
-                        }
+                        } *@
                     </MudHidden>
-                    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+                   @*  <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
                         @if (_canCreate)
                         {
                             <MudButton Variant="Variant.Outlined" Color="Color.Primary"
@@ -120,8 +117,8 @@
                                        IconColor="Color.Surface">
                                 @ConstantString.Delete
                             </MudButton>
-                        }*@
-                    </MudHidden>
+                        }
+                    </MudHidden> *@
                 </div> 
                 @if (_canSearch)
                 {
@@ -132,12 +129,13 @@
             </div>
         </div>
     </ToolBarContent>
-    <Columns>
+    <Columns >
+        <SelectColumn T="ProductResponse" />
         <PropertyColumn Property="x => x.Id" Title="Id" />
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Description" />
         <PropertyColumn Property="x => x.Price" />
-        <TemplateColumn CellStyle="width:60px" Title="Actions" Sortable="false">
+        <TemplateColumn >
             <CellTemplate>
                 <MudMenu Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Size="Size.Small"
                          Dense="true"
@@ -154,5 +152,3 @@
         <MudDataGridPager/>
     </PagerContent>
 </MudDataGrid>
-
-

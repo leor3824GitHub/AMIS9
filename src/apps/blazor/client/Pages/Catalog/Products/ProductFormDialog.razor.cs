@@ -1,6 +1,5 @@
 using FSH.Starter.Blazor.Infrastructure.Api;
 using Mapster;
-using MediatR;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -16,7 +15,7 @@ public partial class ProductFormDialog
     private IApiClient productclient { get; set; } = default!;
     [Parameter] public Action? Refresh { get; set; }
     [Parameter] public bool? IsCreate { get; set; }
-
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
     private MudForm? _form;
     private bool _saving;
     private bool _saveingnew;
@@ -30,29 +29,30 @@ public partial class ProductFormDialog
         //if (!await _form.Validate()) return;
 
         //_saving = true;
-
-        if (IsCreate == true)
+        if (IsCreate.HasValue)
         {
-            var m = Model.Adapt<CreateProductCommand>();
-            var response = await productclient.CreateProductEndpointAsync("1", m);
-            if (response != null)
+            Snackbar.Add(IsCreate.Value ? "Creating product..." : "Updating product...", Severity.Info);
+            if (IsCreate.Value)
             {
-                MudDialog.Close(DialogResult.Ok(true));
-                Refresh?.Invoke();
+                var model = Model.Adapt<CreateProductCommand>();
+                var response = await productclient.CreateProductEndpointAsync("1", model);
+                if (response != null)
+                {
+                    MudDialog.Close(DialogResult.Ok(true));
+                    Refresh?.Invoke();
+                }
+            }
+            else
+            {
+                var response = await productclient.UpdateProductEndpointAsync("1", Model.Id, Model);
+                if (response != null)
+                {
+                    MudDialog.Close(DialogResult.Ok(true));
+                    Refresh?.Invoke();
+                }
             }
         }
-        else
-        {
-            var response = await productclient.UpdateProductEndpointAsync("1",Model.Id, Model);
-            if (response != null)
-            {
-                MudDialog.Close(DialogResult.Ok(true));
-                Refresh?.Invoke();
-            }
-        }
-        
         //_saving = false;
-       
     }
     private void Cancel()
     {

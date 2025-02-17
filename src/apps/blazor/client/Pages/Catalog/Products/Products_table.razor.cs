@@ -2,9 +2,11 @@ using FSH.Starter.Blazor.Infrastructure.Api;
 using FSH.Starter.Blazor.Infrastructure.Auth;
 using FSH.Starter.Shared.Authorization;
 using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.VisualBasic;
 using MudBlazor;
 
 namespace FSH.Starter.Blazor.Client.Pages.Catalog.Products;
@@ -19,6 +21,8 @@ public partial class Products_table
     private IAuthorizationService AuthService { get; set; } = default!;
     [Inject]
     protected IApiClient productclient { get; set; } = default!;
+    [Inject]
+    private ISnackbar Snackbar { get; set; }
     private ProductResponse _currentDto = new();
     private string searchString = "";
     private bool _loading;
@@ -103,37 +107,50 @@ public partial class Products_table
     {
         var model = new UpdateProductCommand();
 
-        await ShowEditFormDialog("CreateAnItem", model, true);
+        await ShowEditFormDialog("Create new Item", model, true);
     }
     private async Task OnClone()
     {
-    //    var copy = _selectedItems.First();
-    //    var model = Mapper.Map<ProductResponse, CreateProductCommand>(copy, opts =>
-    //    {
-    //        opts.AfterMap((src, dest) =>
-    //        {
-    //            dest.Id = 0;
-    //        });
-    //    });
-    //    await ShowEditFormDialog("CreateAnItem", model);
+        var copy = _selectedItems.First();
+        if (copy != null)
+        {
+            var command = new Mapper().Map<ProductResponse, UpdateProductCommand>(copy);
+            command.Id = Guid.NewGuid(); // Assign a new Id for the cloned item
+            await ShowEditFormDialog("Clone an Item", command, true);
+        }
     }
     private async Task OnEdit(ProductResponse dto)
     {
         var command = dto.Adapt<UpdateProductCommand>();
-        await ShowEditFormDialog("EditTheItem", command, false);
+        await ShowEditFormDialog("Edit the Item", command, false);
     }
     private async Task OnDelete(ProductResponse dto)
     {
         if (dto.Id.HasValue)
         {
-            await productclient.DeleteProductEndpointAsync("1", dto.Id.Value);
-            await _table.ReloadServerData();
-            _selectedItems.Clear();
+                 await productclient.DeleteProductEndpointAsync("1", dto.Id.Value);
+
+                Snackbar.Add("Item deleted", Severity.Success);
+                await _table.ReloadServerData();
+                _selectedItems.Clear();
         }
+    }
+    private async Task OnDeleteChecked()
+    {
+        //var contentText = string.Format(ConstantString.DeleteConfirmWithSelected, _selectedItems.Count);
+        //var command = new DeleteProductCommand(_selectedItems.Select(x => x.Id).ToArray());
+        //await DialogServiceHelper.ShowDeleteConfirmationDialog(command, ConstantString.DeleteConfirmationTitle, contentText,
+        //async () =>
+        //{
+        //    await _table.ReloadServerData();
+        //    _selectedItems.Clear();
+        //});
+
     }
     private async Task OnRefresh()
     {
         await _table.ReloadServerData();
+        _selectedItems = new HashSet<ProductResponse>();
     }
 
     private Task OnSearch(string text)
