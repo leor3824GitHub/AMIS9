@@ -14,9 +14,11 @@ public sealed class DeleteProductHandler(
     public async Task Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
+        var count = await repository.CountAsync(cancellationToken);
+        logger.LogInformation("Total items before delete : {itemcount} ", count);
         var product = await repository.GetByIdAsync(request.Id, cancellationToken);
         _ = product ?? throw new ProductNotFoundException(request.Id);
         await repository.DeleteAsync(product, cancellationToken);
-        logger.LogInformation("product with id : {ProductId} deleted", product.Id);
+        logger.LogInformation("Product with id : {ProductId} deleted", product.Id);
     }
 }

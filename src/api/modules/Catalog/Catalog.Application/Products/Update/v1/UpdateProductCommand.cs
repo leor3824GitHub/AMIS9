@@ -7,4 +7,6 @@ public sealed record UpdateProductCommand(
     decimal Price,
     string? Description = null,
     Guid? BrandId = null,
-    string? Unit = null) : IRequest<UpdateProductResponse>;
+    string? BaseUnit = null,
+    decimal ConversionFactor = 1,
+    string? BulkUnit = null) : IRequest<UpdateProductResponse>;
