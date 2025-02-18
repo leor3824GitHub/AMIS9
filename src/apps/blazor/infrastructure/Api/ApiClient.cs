@@ -4504,17 +4504,20 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; } = "Sample Product";
 
-        [System.Text.Json.Serialization.JsonPropertyName("price")]
-        public double Price { get; set; } = 10D;
-
         [System.Text.Json.Serialization.JsonPropertyName("description")]
         public string Description { get; set; } = "Descriptive Description";
 
         [System.Text.Json.Serialization.JsonPropertyName("brandId")]
         public System.Guid? BrandId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("unit")]
-        public string Unit { get; set; } = "pcs";
+        [System.Text.Json.Serialization.JsonPropertyName("baseUnit")]
+        public string BaseUnit { get; set; } = "pcs";
+
+        [System.Text.Json.Serialization.JsonPropertyName("conversionFactor")]
+        public double ConversionFactor { get; set; } = 10D;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bulkUnit")]
+        public string BulkUnit { get; set; } = "pcs";
 
     }
 
@@ -4684,14 +4687,17 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         [System.Text.Json.Serialization.JsonPropertyName("description")]
         public string Description { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("price")]
-        public double Price { get; set; }
-
         [System.Text.Json.Serialization.JsonPropertyName("brand")]
         public BrandResponse Brand { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("unit")]
-        public string Unit { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("baseUnit")]
+        public string BaseUnit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("conversionFactor")]
+        public double ConversionFactor { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bulkUnit")]
+        public string BulkUnit { get; set; }
 
     }
 
@@ -5032,17 +5038,20 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("price")]
-        public double Price { get; set; }
-
         [System.Text.Json.Serialization.JsonPropertyName("description")]
         public string Description { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("brandId")]
         public System.Guid? BrandId { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("unit")]
-        public string Unit { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("baseUnit")]
+        public string BaseUnit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("conversionFactor")]
+        public double ConversionFactor { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bulkUnit")]
+        public string BulkUnit { get; set; }
 
     }
 

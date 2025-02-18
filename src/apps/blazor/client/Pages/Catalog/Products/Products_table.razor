@@ -134,8 +134,9 @@
         <PropertyColumn Property="x => x.Id" Title="Id" />
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Description" />
-        <PropertyColumn Property="x => x.Price" />
-        <PropertyColumn Property="x => x.Unit" />
+        <PropertyColumn Property="x => x.BaseUnit" />
+        <PropertyColumn Property="x => x.ConversionFactor" />
+        <PropertyColumn Property="x => x.BulkUnit" />
         <TemplateColumn >
             <CellTemplate>
                 <MudMenu Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Size="Size.Small"
