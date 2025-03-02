@@ -6,55 +6,61 @@ using MediatR;
 namespace FSH.Starter.WebApi.Catalog.Domain;
 public class Purchase : AuditableEntity, IAggregateRoot
 {
-    public Guid Productid { get; private set; }
-    public Guid Supplierid { get; private set; }
+    public string? ReferenceNo { get; private set; }
+    public Guid ProductId { get; private set; }
+    public DateTime PurchaseDate { get; private set; } = default!;
+    public Guid SupplierId { get; private set; }
     public decimal Quantity { get; private set; }
-    public decimal Unitprice { get; private set; }
-    public decimal Totalprice { get; private set; }
-    public DateTime Purchasedate { get; private set; } = default!;
+    public decimal UnitPrice { get; private set; }
+    public decimal TotalAmount { get; private set; }
 
-    public static Purchase Create(Guid productid, Guid supplierid, decimal quantity, decimal unitprice, decimal totalprice, DateTime purchasedate)
+    public static Purchase Create(Guid productId, Guid supplierId, decimal quantity, decimal unitPrice, decimal totalAmount, DateTime purchaseDate, string referenceNo)
     {
-        var purchase = new Purchase();
+        var purchase = new Purchase
+        {
+            ProductId = productId,
+            SupplierId = supplierId,
+            Quantity = quantity,
+            UnitPrice = unitPrice,
+            TotalAmount = totalAmount,
+            PurchaseDate = purchaseDate,
+            ReferenceNo = referenceNo
+        };
 
-        purchase.Productid = productid;
-        purchase.Supplierid = supplierid;
-        purchase.Quantity = quantity;
-        purchase.Unitprice = unitprice;
-        purchase.Totalprice = totalprice;
-        purchase.Purchasedate = purchasedate;
-
-        purchase.QueueDomainEvent(new PurchaseCreated() { Purchase = purchase });
+        purchase.QueueDomainEvent(new PurchaseCreated { Purchase = purchase });
 
         return purchase;
     }
 
-    public Purchase Update(Guid? productid, Guid? supplierid, decimal? quantity, decimal? unitprice, decimal? totalprice, DateTime? purchasedate)
+    public Purchase Update(Guid? productId, Guid? supplierId, decimal? quantity, decimal? unitPrice, decimal? totalAmount, DateTime? purchaseDate, string? referenceNo)
     {
-        if (productid.HasValue && productid.Value != Guid.Empty && !Productid.Equals(productid.Value)) Productid = productid.Value;
-        if (supplierid.HasValue && supplierid.Value != Guid.Empty && !Supplierid.Equals(supplierid.Value)) Supplierid = supplierid.Value;
+        if (productId.HasValue && productId.Value != Guid.Empty && !ProductId.Equals(productId.Value)) ProductId = productId.Value;
+        if (supplierId.HasValue && supplierId.Value != Guid.Empty && !SupplierId.Equals(supplierId.Value)) SupplierId = supplierId.Value;
         if (quantity.HasValue && Quantity != quantity) Quantity = quantity.Value;
-        if (unitprice.HasValue && Unitprice != unitprice) Unitprice = unitprice.Value;
-        if (totalprice.HasValue && Totalprice != totalprice) Totalprice = totalprice.Value;
-        if (purchasedate.HasValue && Purchasedate != purchasedate) Purchasedate = purchasedate.Value;
-        this.QueueDomainEvent(new PurchaseUpdated() { Purchase = this });
+        if (unitPrice.HasValue && UnitPrice != unitPrice) UnitPrice = unitPrice.Value;
+        if (totalAmount.HasValue && TotalAmount != totalAmount) TotalAmount = totalAmount.Value;
+        if (purchaseDate.HasValue && PurchaseDate != purchaseDate) PurchaseDate = purchaseDate.Value;
+        if (!string.IsNullOrEmpty(referenceNo) && !ReferenceNo!.Equals(referenceNo, StringComparison.Ordinal)) ReferenceNo = referenceNo;
+
+        this.QueueDomainEvent(new PurchaseUpdated { Purchase = this });
         return this;
     }
 
-    public static Purchase Update(Guid id, Guid productid, Guid supplierid, decimal quantity, decimal unitprice, decimal totalprice, DateTime purchasedate)
+    public static Purchase Update(Guid id, Guid productId, Guid supplierId, decimal quantity, decimal unitPrice, decimal totalAmount, DateTime purchaseDate, string referenceNo)
     {
         var purchase = new Purchase
         {
             Id = id,
-            Productid = productid,
-            Supplierid = supplierid,
+            ProductId = productId,
+            SupplierId = supplierId,
             Quantity = quantity,
-            Unitprice = unitprice,
-            Totalprice = totalprice,
-            Purchasedate = purchasedate
+            UnitPrice = unitPrice,
+            TotalAmount = totalAmount,
+            PurchaseDate = purchaseDate,
+            ReferenceNo = referenceNo
         };
 
-        purchase.QueueDomainEvent(new PurchaseUpdated() { Purchase = purchase });
+        purchase.QueueDomainEvent(new PurchaseUpdated { Purchase = purchase });
 
         return purchase;
     }

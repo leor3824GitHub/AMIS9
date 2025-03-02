@@ -74,17 +74,17 @@ namespace FSH.Starter.WebApi.Migrations.PostgreSQL.Catalog
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("BaseUnit")
+                    b.Property<double>("AvgPrice")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Barcode")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("BrandId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("BulkQuantity")
+                        .HasColumnType("integer");
 
                     b.Property<string>("BulkUnit")
                         .HasColumnType("text");
-
-                    b.Property<decimal>("ConversionFactor")
-                        .HasColumnType("numeric");
 
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone");
@@ -113,30 +113,28 @@ namespace FSH.Starter.WebApi.Migrations.PostgreSQL.Catalog
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                    b.Property<string>("Pictures")
+                        .HasColumnType("text");
+
+                    b.Property<double>("SalePrice")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("integer");
 
                     b.Property<string>("TenantId")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("UnitType")
+                        .HasColumnType("text");
 
-                    b.HasIndex("BrandId");
+                    b.HasKey("Id");
 
                     b.ToTable("Products", "catalog");
 
                     b.HasAnnotation("Finbuckle:MultiTenant", true);
-                });
-
-            modelBuilder.Entity("FSH.Starter.WebApi.Catalog.Domain.Product", b =>
-                {
-                    b.HasOne("FSH.Starter.WebApi.Catalog.Domain.Brand", "Brand")
-                        .WithMany()
-                        .HasForeignKey("BrandId");
-
-                    b.Navigation("Brand");
                 });
 #pragma warning restore 612, 618
         }

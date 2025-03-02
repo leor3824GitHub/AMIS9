@@ -2,21 +2,34 @@
     <MudDialog>
         <DialogContent>
             <DataAnnotationsValidator />
+            <ValidationSummary />
             <MudGrid>
                 <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="Model.Name" Label="Name" />
+                    <MudTextField @bind-Value="Model.Name" Label="Name" For="@(() => Model.Name)" />
                 </MudItem>
                 <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="Model.Description" Label="Description" />
+                    <MudTextField @bind-Value="Model.Description" Label="Description" For="@(() => Model.Description)" />
                 </MudItem>               
                 <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="Model.BaseUnit" Label="BaseUnit" />
+                    <MudTextField @bind-Value="Model.Barcode" Label="Barcode" For="@(() => Model.Barcode)" />
                 </MudItem>
                 <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="Model.ConversionFactor" Label="ConversionFactor" />
+                    <MudTextField @bind-Value="Model.StockQuantity" Label="StockQuantity" For="@(() => Model.StockQuantity)" />
                 </MudItem>
                 <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="Model.BulkUnit" Label="BulkUnit" />
+                    <MudTextField @bind-Value="Model.AvgPrice" Label="AvgPrice" For="@(() => Model.AvgPrice)" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="Model.SalePrice" Label="SalePrice" For="@(() => Model.SalePrice)" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="Model.UnitType" Label="UnitType" For="@(() => Model.UnitType)" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="Model.BulkUnit" Label="BulkUnit" For="@(() => Model.BulkUnit)" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="Model.BulkQuantity" Label="BulkQuantity" For="@(() => Model.BulkQuantity)" />
                 </MudItem>
             </MudGrid>
         </DialogContent>
@@ -26,4 +39,3 @@
         </DialogActions>
     </MudDialog>
 </EditForm>
-

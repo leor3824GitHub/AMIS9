@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FSH.Starter.WebApi.Migrations.PostgreSQL.Catalog
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20250213222828_Add Catalog Schema1")]
-    partial class AddCatalogSchema1
+    [Migration("20250301181140_Add Catalog Schema")]
+    partial class AddCatalogSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,8 +77,17 @@ namespace FSH.Starter.WebApi.Migrations.PostgreSQL.Catalog
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("BrandId")
-                        .HasColumnType("uuid");
+                    b.Property<double>("AvgPrice")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Barcode")
+                        .HasColumnType("text");
+
+                    b.Property<int>("BulkQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("BulkUnit")
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone");
@@ -107,33 +116,28 @@ namespace FSH.Starter.WebApi.Migrations.PostgreSQL.Catalog
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                    b.Property<string>("Pictures")
+                        .HasColumnType("text");
+
+                    b.Property<double>("SalePrice")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("integer");
 
                     b.Property<string>("TenantId")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<string>("Unit")
+                    b.Property<string>("UnitType")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BrandId");
-
                     b.ToTable("Products", "catalog");
 
                     b.HasAnnotation("Finbuckle:MultiTenant", true);
-                });
-
-            modelBuilder.Entity("FSH.Starter.WebApi.Catalog.Domain.Product", b =>
-                {
-                    b.HasOne("FSH.Starter.WebApi.Catalog.Domain.Brand", "Brand")
-                        .WithMany()
-                        .HasForeignKey("BrandId");
-
-                    b.Navigation("Brand");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,9 +10,11 @@ public class SearchProductSpecs : EntitiesByPaginationFilterSpec<Product, Produc
     public SearchProductSpecs(SearchProductsCommand command)
         : base(command) =>
         Query
-            .Include(p => p.Brand)
             .OrderBy(c => c.Name, !command.HasOrderBy())
-            .Where(p => p.BrandId == command.BrandId!.Value, command.BrandId.HasValue);
-            //.Where(p => p.Price >= command.MinimumRate!.Value, command.MinimumRate.HasValue)
-            //.Where(p => p.Price <= command.MaximumRate!.Value, command.MaximumRate.HasValue);
+            .Where(b => b.Name.Contains(command.Keyword), !string.IsNullOrEmpty(command.Keyword));
+    //.Include(p => p.Brand)
+    //.OrderBy(c => c.Name, !command.HasOrderBy())
+    //.Where(p => p.BrandId == command.BrandId!.Value, command.BrandId.HasValue);
+    //.Where(p => p.Price >= command.MinimumRate!.Value, command.MinimumRate.HasValue)
+    //.Where(p => p.Price <= command.MaximumRate!.Value, command.MaximumRate.HasValue);
 }

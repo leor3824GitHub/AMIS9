@@ -1,7 +1,8 @@
 ﻿using FSH.Framework.Core.Domain.Events;
 
 namespace FSH.Starter.WebApi.Catalog.Domain.Events;
-public sealed record SaleCreated : DomainEvent
+
+public sealed record IssuanceUpdated : DomainEvent
 {
-    public Sale? Sale { get; set; }
+    public Issuance? Issuance { get; set; }
 }

@@ -5,7 +5,10 @@ public sealed record UpdateProductCommand(
     Guid Id,
     string? Name,
     string? Description = null,
-    Guid? BrandId = null,
-    string? BaseUnit = null,
-    decimal ConversionFactor = 1,
-    string? BulkUnit = null) : IRequest<UpdateProductResponse>;
+    string? Barcode = null,
+    int StockQuantity = 0,
+    double AvgPrice = 0,
+    double SalePrice = 0,
+    string? UnitType = "pc",
+    string? BulkUnit = "box",
+    int BulkQuantity = 0) : IRequest<UpdateProductResponse>;

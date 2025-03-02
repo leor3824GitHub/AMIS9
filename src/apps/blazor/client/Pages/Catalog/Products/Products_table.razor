@@ -131,12 +131,16 @@
     </ToolBarContent>
     <Columns >
         <SelectColumn T="ProductResponse" />
-        <PropertyColumn Property="x => x.Id" Title="Id" />
+        @* <PropertyColumn Property="x => x.Id" Title="Id" /> *@
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Description" />
-        <PropertyColumn Property="x => x.BaseUnit" />
-        <PropertyColumn Property="x => x.ConversionFactor" />
+        <PropertyColumn Property="x => x.Barcode" />
+        <PropertyColumn Property="x => x.StockQuantity" />
+        <PropertyColumn Property="x => x.AvgPrice" />
+        <PropertyColumn Property="x => x.SalePrice" />
+        <PropertyColumn Property="x => x.UnitType" />
         <PropertyColumn Property="x => x.BulkUnit" />
+        <PropertyColumn Property="x => x.BulkQuantity" />
         <TemplateColumn >
             <CellTemplate>
                 <MudMenu Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Size="Size.Small"

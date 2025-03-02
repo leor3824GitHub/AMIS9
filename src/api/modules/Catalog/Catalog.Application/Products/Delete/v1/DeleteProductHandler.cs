@@ -15,10 +15,25 @@ public sealed class DeleteProductHandler(
     {
         ArgumentNullException.ThrowIfNull(request);
         var count = await repository.CountAsync(cancellationToken);
-        logger.LogInformation("Total items before delete : {itemcount} ", count);
+        logger.LogInformation("Total items before delete : {ItemCount} ", count);
         var product = await repository.GetByIdAsync(request.Id, cancellationToken);
         _ = product ?? throw new ProductNotFoundException(request.Id);
         await repository.DeleteAsync(product, cancellationToken);
+        //await repository.SaveChangesAsync(cancellationToken); // Ensure changes are saved to the database
         logger.LogInformation("Product with id : {ProductId} deleted", product.Id);
+
+        //ArgumentNullException.ThrowIfNull(request);
+
+        //var product = await repository.GetByIdAsync(request.Id, cancellationToken);
+        //_ = product ?? throw new ProductNotFoundException(request.Id);
+
+        //// 🔹 Soft delete: Mark product as deleted
+        //product.Deleted = DateTimeOffset.UtcNow;
+
+        //await repository.UpdateAsync(product, cancellationToken); // ✅ Use UpdateAsync
+        //await repository.SaveChangesAsync(cancellationToken); // ✅ Persist changes
+
+        //logger.LogInformation("Product with id: {ProductId} was soft deleted by user: {UserId}",
+        //    product.Id, product.DeletedBy);
     }
 }

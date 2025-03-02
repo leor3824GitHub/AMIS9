@@ -16,7 +16,7 @@ public sealed class UpdateProductHandler(
         ArgumentNullException.ThrowIfNull(request);
         var product = await repository.GetByIdAsync(request.Id, cancellationToken);
         _ = product ?? throw new ProductNotFoundException(request.Id);
-        var updatedProduct = product.Update(request.Name, request.Description, request.BrandId, request.BaseUnit, request.ConversionFactor, request.BulkUnit);
+        var updatedProduct = product.Update(request.Name, request.Description, request.Barcode, request.StockQuantity, request.AvgPrice, request.SalePrice, request.UnitType, request.BulkUnit, request.BulkQuantity, product.Pictures);
         await repository.UpdateAsync(updatedProduct, cancellationToken);
         logger.LogInformation("product with id : {ProductId} updated.", product.Id);
         return new UpdateProductResponse(product.Id);

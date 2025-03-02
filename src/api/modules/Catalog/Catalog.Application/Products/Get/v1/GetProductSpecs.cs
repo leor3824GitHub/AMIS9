@@ -8,7 +8,7 @@ public class GetProductSpecs : Specification<Product, ProductResponse>
     public GetProductSpecs(Guid id)
     {
         Query
-            .Where(p => p.Id == id)
-            .Include(p => p.Brand);
+            .Where(p => p.Id == id);
+            //.Include(p => p.Brand);
     }
 }

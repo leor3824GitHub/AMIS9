@@ -19,18 +19,33 @@ internal sealed class CatalogDbInitializer(
 
     public async Task SeedAsync(CancellationToken cancellationToken)
     {
-        const string Name = "Keychron V6 QMK Custom Wired Mechanical Keyboard";
-        const string Description = "A full-size layout QMK/VIA custom mechanical keyboard";
-        Guid? BrandId = null;
-        const string BaseUnit = "pcs";
-        const decimal conversionFactor = 1;
-        const string BulkUnit = "pcs";
-        if (await context.Products.FirstOrDefaultAsync(t => t.Name == Name, cancellationToken).ConfigureAwait(false) is null)
+        // Seed default catalog data of 15 random products
+        var random = new Random();
+        var products = new List<Product>();
+
+        for (int i = 0; i < 15; i++)
         {
-            var product = Product.Create(Name, Description, BrandId, BaseUnit, conversionFactor, BulkUnit);
-            await context.Products.AddAsync(product, cancellationToken);
+            string name = $"Product {i + 1}";
+            string description = $"Description for product {i + 1}";
+            string barcode = random.Next(100000000, 999999999).ToString();
+            int stockQuantity = random.Next(1, 100);
+            double avgPrice = random.NextDouble() * 100;
+            double salePrice = avgPrice * (random.NextDouble() * 0.5 + 0.75); // Sale price between 75% and 125% of avg price
+            string unitType = "Each";
+            string bulkUnit = "Box";
+            int bulkQuantity = random.Next(1, 50);
+            List<ProductImage>? pictures = null;
+
+            var product = Product.Create(name, description, barcode, stockQuantity, avgPrice, salePrice, unitType, bulkUnit, bulkQuantity, pictures);
+            products.Add(product);
+        }
+
+        if (!await context.Products.AnyAsync(cancellationToken).ConfigureAwait(false))
+        {
+            await context.Products.AddRangeAsync(products, cancellationToken);
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             logger.LogInformation("[{Tenant}] seeding default catalog data", context.TenantInfo!.Identifier);
         }
     }
+
 }

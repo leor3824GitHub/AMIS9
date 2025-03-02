@@ -4507,17 +4507,26 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         [System.Text.Json.Serialization.JsonPropertyName("description")]
         public string Description { get; set; } = "Descriptive Description";
 
-        [System.Text.Json.Serialization.JsonPropertyName("brandId")]
-        public System.Guid? BrandId { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("barcode")]
+        public string Barcode { get; set; } = "1234567890123";
 
-        [System.Text.Json.Serialization.JsonPropertyName("baseUnit")]
-        public string BaseUnit { get; set; } = "pcs";
+        [System.Text.Json.Serialization.JsonPropertyName("stockQuantity")]
+        public int StockQuantity { get; set; } = 0;
 
-        [System.Text.Json.Serialization.JsonPropertyName("conversionFactor")]
-        public double ConversionFactor { get; set; } = 10D;
+        [System.Text.Json.Serialization.JsonPropertyName("avgPrice")]
+        public double AvgPrice { get; set; } = 0D;
+
+        [System.Text.Json.Serialization.JsonPropertyName("salePrice")]
+        public double SalePrice { get; set; } = 0D;
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitType")]
+        public string UnitType { get; set; } = "pcs";
+
+        [System.Text.Json.Serialization.JsonPropertyName("bulkQuantity")]
+        public int BulkQuantity { get; set; } = 0;
 
         [System.Text.Json.Serialization.JsonPropertyName("bulkUnit")]
-        public string BulkUnit { get; set; } = "pcs";
+        public string BulkUnit { get; set; } = "box";
 
     }
 
@@ -4687,17 +4696,26 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         [System.Text.Json.Serialization.JsonPropertyName("description")]
         public string Description { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("brand")]
-        public BrandResponse Brand { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("barcode")]
+        public string Barcode { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("baseUnit")]
-        public string BaseUnit { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("stockQuantity")]
+        public int StockQuantity { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("conversionFactor")]
-        public double ConversionFactor { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("avgPrice")]
+        public double AvgPrice { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("salePrice")]
+        public double SalePrice { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitType")]
+        public string UnitType { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("bulkUnit")]
         public string BulkUnit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bulkQuantity")]
+        public int BulkQuantity { get; set; }
 
     }
 
@@ -4873,14 +4891,11 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         [System.Text.Json.Serialization.JsonPropertyName("orderBy")]
         public System.Collections.Generic.ICollection<string> OrderBy { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("brandId")]
-        public System.Guid? BrandId { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("minimumRate")]
-        public double? MinimumRate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("maximumRate")]
-        public double? MaximumRate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
+        public string Description { get; set; }
 
     }
 
@@ -5041,17 +5056,26 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         [System.Text.Json.Serialization.JsonPropertyName("description")]
         public string Description { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("brandId")]
-        public System.Guid? BrandId { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("barcode")]
+        public string Barcode { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("baseUnit")]
-        public string BaseUnit { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("stockQuantity")]
+        public int StockQuantity { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("conversionFactor")]
-        public double ConversionFactor { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("avgPrice")]
+        public double AvgPrice { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("salePrice")]
+        public double SalePrice { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("unitType")]
+        public string UnitType { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("bulkUnit")]
         public string BulkUnit { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bulkQuantity")]
+        public int BulkQuantity { get; set; }
 
     }
 

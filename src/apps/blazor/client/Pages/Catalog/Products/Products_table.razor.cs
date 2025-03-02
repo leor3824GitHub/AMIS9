@@ -1,3 +1,8 @@
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using FSH.Starter.Blazor.Client.Components;
+using FSH.Starter.Blazor.Client.Components.Dialogs;
+using FSH.Starter.Blazor.Client.Components.EntityTable;
 using FSH.Starter.Blazor.Infrastructure.Api;
 using FSH.Starter.Blazor.Infrastructure.Auth;
 using FSH.Starter.Shared.Authorization;
@@ -26,6 +31,10 @@ public partial class Products_table
     private ProductResponse _currentDto = new();
     private string searchString = "";
     private bool _loading;
+    private string successMessage = "";
+
+private IEnumerable<ProductResponse>? _entityList;
+    private int _totalItems;
 
     private bool _canSearch;
     private bool _canCreate;
@@ -42,7 +51,7 @@ public partial class Products_table
         _canDelete = await AuthService.HasPermissionAsync(state.User, FshActions.Delete, FshResources.Products);
         _canExport = await AuthService.HasPermissionAsync(state.User, FshActions.Export, FshResources.Products);
 
-        await LoadBrandsAsync();
+        //await LoadBrandsAsync();
     }
     private async Task<GridData<ProductResponse>> ServerReload(GridState<ProductResponse> state)
     {
@@ -59,16 +68,17 @@ public partial class Products_table
                     Keyword = searchString
                 }
             };
-            productFilter.MinimumRate = Convert.ToDouble(SearchMinimumRate);
-            productFilter.MaximumRate = Convert.ToDouble(SearchMaximumRate);
-            productFilter.BrandId = SearchBrandId;
-            var result = await productclient.SearchProductsEndpointAsync("1", productFilter);
 
-            return new GridData<ProductResponse>
+            if (await ApiHelper.ExecuteCallGuardedAsync(
+                    () => productclient.SearchProductsEndpointAsync("1", productFilter), Toast, Navigation)
+                is { } result)
             {
-                Items = result.Items ?? new List<ProductResponse>(),
-                TotalItems = result.TotalCount
-            };
+                _totalItems = result.TotalCount;
+                _entityList = result.Items;
+            }
+
+            _loading = false;
+            return new GridData<ProductResponse> { TotalItems = _totalItems, Items = _entityList };
         }
         catch (Exception ex)
         {
@@ -83,7 +93,6 @@ public partial class Products_table
         {
             _loading = false;
         }
-
     }
     private async Task ShowEditFormDialog(string title, UpdateProductCommand command, bool IsCreate)
     {
@@ -126,26 +135,48 @@ public partial class Products_table
     }
     private async Task OnDelete(ProductResponse dto)
     {
-        if (dto.Id.HasValue)
-        {
-                 await productclient.DeleteProductEndpointAsync("1", dto.Id.Value);
+        var productId = dto.Id;
+        _ = productId ?? throw new InvalidOperationException("IdFunc can't be null!");
 
-                Snackbar.Add(dto.Id.Value.ToString(), Severity.Success);
-                //await _table.ReloadServerData();
-                //_selectedItems.Clear();
+        string deleteContent = "You're sure you want to delete {0} with id '{1}'?";
+        var parameters = new DialogParameters
+        {
+            { nameof(DeleteConfirmation.ContentText), string.Format(deleteContent, "Product", dto.Id) }
+        };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = false };
+        var dialog = await DialogService.ShowAsync<DeleteConfirmation>("Delete", parameters, options);
+        var result = await dialog.Result;
+        if (!result!.Canceled && productId.HasValue)
+        {
+            await ApiHelper.ExecuteCallGuardedAsync(
+                () => productclient.DeleteProductEndpointAsync("1", productId.Value),
+                Snackbar);
+
+            await _table.ReloadServerData();
         }
     }
     private async Task OnDeleteChecked()
     {
-        //var contentText = string.Format(ConstantString.DeleteConfirmWithSelected, _selectedItems.Count);
-        //var command = new DeleteProductCommand(_selectedItems.Select(x => x.Id).ToArray());
-        //await DialogServiceHelper.ShowDeleteConfirmationDialog(command, ConstantString.DeleteConfirmationTitle, contentText,
-        //async () =>
-        //{
-        //    await _table.ReloadServerData();
-        //    _selectedItems.Clear();
-        //});
+        var productId = _selectedItems.First().Id;
+        _ = productId ?? throw new InvalidOperationException("IdFunc can't be null!");
 
+        string deleteContent = "You're sure you want to delete {0} with id '{1}'?";
+        var parameters = new DialogParameters
+        {
+            { nameof(DeleteConfirmation.ContentText), string.Format(deleteContent, "Product", _selectedItems.First().Id) }
+        };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = false };
+        var dialog = await DialogService.ShowAsync<DeleteConfirmation>("Delete", parameters, options);
+        var result = await dialog.Result;
+        if (!result!.Canceled && productId.HasValue)
+        {
+            await ApiHelper.ExecuteCallGuardedAsync(
+                () => productclient.DeleteProductEndpointAsync("1", productId.Value),
+                Snackbar);
+
+            await _table.ReloadServerData();
+            _selectedItems.Clear();
+        }
     }
     private async Task OnRefresh()
     {
